@@ -10,13 +10,17 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('push', function(event) {
   console.log('[SW] push:', event.data.text());
-  let selfKeys = [];
-  for (let x in self) selfKeys.push(x);
-  console.log('[SW] self: ', selfKeys);
-  let globalKeys = [];
-  for (let x in global) globalKeys.push(x);
-  console.log('[SW] global: ', selfKeys);
+  event.waitUntil(async function() {
+    const allClients = await clients.matchAll({
+      includeUncontrolled: true
+    });
+    for (const client of allClients) {
+      console.log('[SW] client:', client.url);
+    }
+  }());
+  /*
   if ('sidekickApp' in chrome) {
     chrome.sidekickApp.sendMessage('medium', {a: 5});
   }
+  */
 });
